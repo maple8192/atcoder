@@ -105,7 +105,6 @@ dependencies = [
  "amplify_derive",
  "amplify_num",
  "libc",
- "rand",
  "stringly_conversions",
  "wasm-bindgen",
 ]
