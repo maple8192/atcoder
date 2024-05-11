@@ -45,7 +45,6 @@ use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
 use superslice::Ext;
 
-#[fastout]
 fn main() {
     input! {
 
