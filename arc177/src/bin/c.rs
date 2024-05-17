@@ -21,13 +21,97 @@ use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
 use superslice::Ext;
 
+fn dijkstra(g: &[HashSet<(usize, usize)>], start: usize, end: usize) -> Option<usize> {
+    let mut dist = vec![INF; g.len()];
+    dist[start] = 0;
+    let mut heap = BinaryHeap::from([(Reverse(0), start)]);
 
+    while let Some((c, p)) = heap.pop() {
+        if p == end {
+            return Some(dist[end]);
+        }
+
+        if dist[p] < c.0 {
+            continue;
+        }
+
+        for (next, cost) in g[p].iter() {
+            let d = c.0 + cost;
+            if d < dist[*next] {
+                dist[*next] = d;
+                heap.push((Reverse(d), *next));
+            }
+        }
+    }
+
+    None
+}
 
 fn main() {
     input! {
         n: usize,
         c: [Bytes; n]
     }
+
+    let mut gr = vec![HashSet::<(usize, usize)>::new(); n * n];
+    let mut gb = vec![HashSet::<(usize, usize)>::new(); n * n];
+    for i in 0..n {
+        for j in 0..n - 1 {
+            if c[i][j] == b'R' {
+                if c[i][j + 1] == b'B' {
+                    gr.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 1));
+                    gr.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 0));
+                    gb.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 0));
+                    gb.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 1));
+                } else {
+                    gr.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 0));
+                    gr.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 0));
+                    gb.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 1));
+                    gb.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 1));
+                }
+            } else if c[i][j + 1] == b'R' {
+                gr.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 0));
+                gr.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 1));
+                gb.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 1));
+                gb.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 0));
+            } else {
+                gr.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 1));
+                gr.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 1));
+                gb.get_mut(i * n + j).unwrap().insert((i * n + j + 1, 0));
+                gb.get_mut(i * n + j + 1).unwrap().insert((i * n + j, 0));
+            }
+        }
+    }
+    for i in 0..n - 1 {
+        for j in 0..n {
+            if c[i][j] == b'R' {
+                if c[i + 1][j] == b'B' {
+                    gr.get_mut(i * n + j).unwrap().insert((i * n + j + n, 1));
+                    gr.get_mut(i * n + j + n).unwrap().insert((i * n + j, 0));
+                    gb.get_mut(i * n + j).unwrap().insert((i * n + j + n, 0));
+                    gb.get_mut(i * n + j + n).unwrap().insert((i * n + j, 1));
+                } else {
+                    gr.get_mut(i * n + j).unwrap().insert((i * n + j + n, 0));
+                    gr.get_mut(i * n + j + n).unwrap().insert((i * n + j, 0));
+                    gb.get_mut(i * n + j).unwrap().insert((i * n + j + n, 1));
+                    gb.get_mut(i * n + j + n).unwrap().insert((i * n + j, 1));
+                }
+            } else if c[i + 1][j] == b'R' {
+                gr.get_mut(i * n + j).unwrap().insert((i * n + j + n, 0));
+                gr.get_mut(i * n + j + n).unwrap().insert((i * n + j, 1));
+                gb.get_mut(i * n + j).unwrap().insert((i * n + j + n, 1));
+                gb.get_mut(i * n + j + n).unwrap().insert((i * n + j, 0));
+            } else {
+                gr.get_mut(i * n + j).unwrap().insert((i * n + j + n, 1));
+                gr.get_mut(i * n + j + n).unwrap().insert((i * n + j, 1));
+                gb.get_mut(i * n + j).unwrap().insert((i * n + j + n, 0));
+                gb.get_mut(i * n + j + n).unwrap().insert((i * n + j, 0));
+            }
+        }
+    }
+
+    let ans = dijkstra(&gr, 0, n * n - 1).unwrap() + dijkstra(&gb, n - 1, n * n - n).unwrap();
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
