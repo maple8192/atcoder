@@ -23,7 +23,14 @@ use superslice::Ext;
 
 fn main() {
     input! {
-        
+        n: usize,
+        mut a: usize,
+        b: usize,
+        mut s: Bytes
+    }
+
+    if a > 2 * b {
+        a = 2 * b;
     }
 }
 

@@ -23,15 +23,31 @@ use superslice::Ext;
 
 fn main() {
     input! {
-        s: String
+        n: usize,
+        c: isize,
+        a: [isize; n]
     }
 
-    let s = s.as_str();
-    if s == "ACE" || s == "BDF" || s == "CEG" || s == "DFA" || s == "EGB" || s == "FAC" || s == "GBD" {
-        println!("Yes");
-    } else {
-        println!("No");
+    let sum = a.iter().sum::<isize>();
+
+    let mut accum = vec![0];
+    for ai in a {
+        accum.push(accum.last().unwrap() + ai * (c - 1));
     }
+
+    let (max_i, max_v) = accum.iter().enumerate().max_by_key(|x| x.1).unwrap();
+    let (min_i, min_v) = accum.iter().enumerate().min_by_key(|x| x.1).unwrap();
+
+    if min_i < max_i {
+        println!("{}", sum + max_v - min_v);
+        return;
+    }
+
+    let (accum_l, accum_r) = (&accum[..=max_i], &accum[min_i..]);
+    let min2_v = accum_l.iter().min().unwrap();
+    let max2_v = accum_r.iter().max().unwrap();
+    let m = max(max_v - min2_v, max2_v - min_v);
+    println!("{}", sum + m);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

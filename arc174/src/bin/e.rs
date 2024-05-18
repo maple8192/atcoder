@@ -23,14 +23,7 @@ use superslice::Ext;
 
 fn main() {
     input! {
-        s: String
-    }
 
-    let s = s.as_str();
-    if s == "ACE" || s == "BDF" || s == "CEG" || s == "DFA" || s == "EGB" || s == "FAC" || s == "GBD" {
-        println!("Yes");
-    } else {
-        println!("No");
     }
 }
 
