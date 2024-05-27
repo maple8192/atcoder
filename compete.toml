@@ -25,25 +25,21 @@ src = '''
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use std::cmp::{max, Ordering, Reverse};
-use std::collections::{BinaryHeap, BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
-use std::convert::Infallible;
-use std::fmt::{Debug, Display, Pointer};
-use std::marker::PhantomData;
-use std::mem::swap;
-use std::ops::{BitXor, Deref};
-use ac_library::{Additive, Dsu, FenwickTree, LazySegtree, Monoid, Segtree, suffix_array_arbitrary};
-use ac_library::{convolution, floor_sum, ModInt998244353};
-use ac_library::{Max, Min};
+use std::cmp::{max, min};
+use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
+use std::iter::once;
+use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
+use bstr::ByteSlice;
 use easy_ext::ext;
-use itertools::{Itertools};
-use nalgebra::min;
-use num_bigint::BigUint;
+use itertools::Itertools;
+use itertools_num::ItertoolsNum;
 use num_integer::{gcd, gcd_lcm};
-use num_traits::{abs, pow};
+use omniswap::swap;
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
+use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
+
 
 fn main() {
     input! {
@@ -59,40 +55,34 @@ const DIR8: [(isize, isize); 8] = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1
 #[ext]
 impl usize {
     fn is_prime(&self) -> bool {
-        if *self == 0 || *self == 1 {
-            return false;
-        }
-        for i in (2..).take_while(|&x| x * x <= *self) {
-            if *self % i == 0 {
-                return false;
-            }
-        }
-        true
+        if *self == 0 || *self == 1 { return false }
+        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x == 0)
     }
 
-    fn divisors(&self) -> HashSet<usize> {
-        let mut div  = HashSet::new();
+    fn divisors(&self) -> Vec<usize> {
+        let mut div = vec![];
         for i in (1..).take_while(|&x| x * x <= *self) {
-            if *self % i == 0 {
-                div.insert(i);
-                div.insert(*self / i);
-            }
+            if *self % i != 0 { continue }
+            div.push(i);
+            if *self / i != i { div.push(*self / i) }
         }
         div
     }
 
-    fn factors(&self) -> HashMap<usize, usize> {
+    fn factors(&self) -> Vec<(usize, usize)> {
+        let mut fact = vec![];
         let mut n = *self;
-        let mut fact = HashMap::new();
-        for i in (2..).take_while(|&x| x * x <= *self) {
+        for i in 2..=*self {
+            if i * i > n { break }
+            if n % i != 0 { continue }
+            let mut e = 0;
             while n % i == 0 {
-                *fact.entry(i).or_insert(0) += 1;
+                e += 1;
                 n /= i;
             }
+            fact.push((i, e));
         }
-        if n != 1 {
-            fact.insert(n, 1);
-        }
+        if n != 1 { fact.push((n, 1)) }
         fact
     }
 }
@@ -100,19 +90,7 @@ impl usize {
 #[ext]
 impl bool {
     fn yes_no(&self) -> &str {
-        if *self {
-            "Yes"
-        } else {
-            "No"
-        }
-    }
-
-    fn possible_impossible(&self) -> &str {
-        if *self {
-            "possible"
-        } else {
-            "impossible"
-        }
+        if *self { "Yes" } else { "No" }
     }
 }
 
@@ -120,11 +98,10 @@ fn eratosthenes(n: usize) -> Vec<bool> {
     let mut vec = vec![true; n + 1];
     vec[0] = false;
     vec[1] = false;
-    for i in (2..).take_while(|&i| i * i <= n) {
-        if vec[i] {
-            for j in (2..).take_while(|&j| i * j <= n) {
-                vec[i * j] = false;
-            }
+    for i in (2..).take_while(|&x| x * x <= n) {
+        if !vec[i] { continue }
+        for j in (2..).take_while(|&j| i * j <= n) {
+            vec[i * j] = false;
         }
     }
     vec
@@ -132,32 +109,22 @@ fn eratosthenes(n: usize) -> Vec<bool> {
 
 fn compress<T: Ord>(vec: &[T]) -> Vec<usize> {
     let set = vec.iter().collect::<BTreeSet<_>>();
-    let mut map = BTreeMap::new();
-    for (i, n) in set.into_iter().enumerate() {
-        map.insert(n, i);
-    }
-    let mut ret = Vec::new();
+    let map = set.into_iter().enumerate().map(|(i, n)| (n, i)).collect::<BTreeMap<_, _>>();
+    let mut ret = vec![];
     for n in vec {
-        ret.push(*map.get(n).unwrap());
+        ret.push(map[n]);
     }
     ret
 }
 
-fn to_undirected(n: usize, e: &Vec<(usize, usize)>) -> Vec<HashSet<usize>> {
-    let mut g = vec![HashSet::new(); n];
-    for &(x, y) in e {
-        g[x].insert(y);
-        g[y].insert(x);
+fn power_by<T, F: Fn(&T, &T) -> T>(mut a: T, mut n: usize, e: T, f: F) -> T {
+    let mut ans = e;
+    while n > 0 {
+        if n % 2 != 0 { ans = f(&ans, &a) }
+        a = f(&a, &a);
+        n /= 2;
     }
-    g
-}
-
-fn to_directed(n: usize, e: &Vec<(usize, usize)>) -> Vec<HashSet<usize>> {
-    let mut g = vec![HashSet::new(); n];
-    for &(x, y) in e {
-        g[x].insert(y);
-    }
-    g
+    ans
 }
 '''
 
