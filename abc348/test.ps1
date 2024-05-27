@@ -1,0 +1,1 @@
+Param($P); cargo compete test $P
