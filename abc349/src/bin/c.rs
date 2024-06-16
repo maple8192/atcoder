@@ -23,7 +23,34 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        s: Bytes,
+        t: Bytes
+    }
 
+    let s = s.to_ascii_uppercase();
+
+    if t[2] == b'X' {
+        let mut i = 0;
+        for c in s {
+            if c == t[i] {
+                i += 1;
+            }
+            if i >= 2 {
+                break;
+            }
+        }
+        println!("{}", (i == 2).yes_no());
+    } else {
+        let mut i = 0;
+        for c in s {
+            if c == t[i] {
+                i += 1;
+            }
+            if i >= 3 {
+                break;
+            }
+        }
+        println!("{}", (i == 3).yes_no());
     }
 }
 

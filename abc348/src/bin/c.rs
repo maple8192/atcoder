@@ -19,12 +19,21 @@ use num_integer::{gcd, gcd_lcm};
 use num_traits::{abs, pow};
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
+use rustc_hash::FxHashMap;
 use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        ac: [(usize, usize); n]
     }
+
+    let mut hm = FxHashMap::default();
+    for (a, c) in ac {
+        hm.entry(c).or_insert(a);
+        hm.insert(c, min(hm[&c], a));
+    }
+    println!("{}", hm.iter().max_by_key(|x| x.1).unwrap().1);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

@@ -12,19 +12,39 @@ use ac_library::{Additive, Dsu, FenwickTree, LazySegtree, Monoid, Segtree, suffi
 use ac_library::{convolution, floor_sum, ModInt998244353};
 use ac_library::{Max, Min};
 use easy_ext::ext;
-use itertools::{Itertools};
+use itertools::Itertools;
 use nalgebra::min;
 use num_bigint::BigUint;
 use num_integer::{gcd, gcd_lcm};
 use num_traits::{abs, pow};
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
+use bstr::ByteSlice;
 use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        mut s: Bytes,
+        q: usize,
+        cd: [(char, char); q]
     }
+
+    let mut abc = (b'a'..=b'z').collect_vec();
+    for (c, d) in cd {
+        let (c, d) = (c as u8, d as u8);
+        for ch in &mut abc {
+            if *ch == c {
+                *ch = d;
+            }
+        }
+    }
+
+    for c in &mut s {
+        *c = abc[(*c - b'a') as usize];
+    }
+
+    println!("{}", s.to_str().unwrap());
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
