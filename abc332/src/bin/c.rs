@@ -23,8 +23,46 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        mut m: usize,
+        s: Bytes
     }
+
+    let mut lo = 0;
+    let mut wd = 0;
+    let mut wl = 0;
+    for c in s {
+        match c {
+            b'0' => {
+                m += wd;
+                lo += wl;
+                wd = 0;
+                wl = 0;
+            }
+            b'1' => {
+                if m > 0 {
+                    m -= 1;
+                    wd += 1;
+                } else if lo > 0 {
+                    lo -= 1;
+                    wl += 1;
+                } else {
+                    wl += 1;
+                }
+            }
+            _ => {
+                if lo > 0 {
+                    lo -= 1;
+                    wl += 1;
+                } else {
+                    wl += 1;
+                }
+            }
+        }
+        //println!("{c} {m} {wd} {lo} {wl}");
+    }
+
+    println!("{}", lo + wl);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
