@@ -18,8 +18,28 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        m: usize,
+        s: [Bytes; n]
     }
+
+    let mut idx = (0..n).collect_vec();
+    while {
+        let mut f = true;
+        for (&i, &j) in idx.iter().tuple_windows() {
+            if s[i].iter().zip(&s[j]).fold(0, |acc, (x, y)| if x != y { acc + 1 } else { acc }) != 1 {
+                f = false;
+                break;
+            }
+        }
+        if f {
+            println!("Yes");
+            return;
+        }
+
+        idx.next_permutation()
+    } {}
+    println!("No");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

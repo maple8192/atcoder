@@ -18,8 +18,27 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        a: usize,
+        b: usize,
+        s: Bytes
     }
+
+    let mut ans = INF;
+    let s = s.iter().chain(&s).copied().collect_vec();
+    for i in 0..n {
+        let win = &s[i..i + n];
+        let mut cost = 0;
+        for j in 0..n / 2 {
+            if win[j] != win[n - j - 1] {
+                cost += b;
+            }
+        }
+
+        ans = ans.min(cost + i * a);
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

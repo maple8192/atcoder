@@ -23,8 +23,23 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        m: usize,
+        a: [usize; m]
     }
+
+    let mut ans = vec![];
+    let mut l = n;
+    let mut j = m - 1;
+    for i in (1..=n).rev() {
+        if a[j] == i {
+            l = i;
+            j = j.saturating_sub(1);
+        }
+        ans.push(l - i);
+    }
+
+    println!("{}", ans.iter().rev().join("\n"));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

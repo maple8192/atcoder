@@ -18,7 +18,30 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        h: usize,
+        w: usize,
+        s: [Bytes; h]
+    }
 
+    let (mut a, mut b, mut c, mut d) = (INF, INF, 0, 0);
+    for (i, r) in s.iter().enumerate() {
+        for (j, &ch) in r.iter().enumerate() {
+            if ch == b'#' {
+                a = a.min(j);
+                b = b.min(i);
+                c = c.max(j);
+                d = d.max(i);
+            }
+        }
+    }
+
+    for i in a..=c {
+        for j in b..=d {
+            if s[j][i] != b'#' {
+                println!("{} {}", j + 1, i + 1);
+                return;
+            }
+        }
     }
 }
 

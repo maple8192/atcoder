@@ -25,13 +25,16 @@ fn main() {
 
     a.sort();
 
-    let mid = a.iter().tuple_windows().map(|(x, y)| x + y).collect_vec();
-    let mid_sum = once(&0).chain(&mid).cumsum::<usize>().collect_vec();
-
-    let mut que = VecDeque::new();
-    for c in a {
-
+    let mut ans = 0;
+    let mut j = 0;
+    for i in 0..n {
+        while j < n && a[j] - a[i] < m {
+            ans = ans.max(j - i + 1);
+            j += 1;
+        }
     }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

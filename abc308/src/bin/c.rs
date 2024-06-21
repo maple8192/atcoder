@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use std::cmp::{max, min};
+use std::cmp::{max, min, Reverse};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
@@ -9,7 +9,9 @@ use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
+use num::FromPrimitive;
 use num_integer::{gcd, gcd_lcm};
+use num_rational::Ratio;
 use omniswap::swap;
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
@@ -18,8 +20,14 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        ab: [(usize, usize); n]
     }
+
+    let mut rat = ab.iter().map(|x| Ratio::<usize>::from_usize(x.0).unwrap() / (x.0 + x.1)).enumerate().collect_vec();
+    rat.sort_by_key(|x| Reverse(x.1));
+
+    println!("{}", rat.iter().map(|x| x.0 + 1).join(" "));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

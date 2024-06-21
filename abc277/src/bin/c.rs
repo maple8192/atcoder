@@ -7,6 +7,7 @@ use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
 use bstr::ByteSlice;
 use easy_ext::ext;
+use im_rc::HashMap;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
 use num_integer::{gcd, gcd_lcm};
@@ -16,10 +17,38 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn dfs(c: usize, v: &FxHashMap<usize, Vec<usize>>, visited: &mut FxHashSet<usize>) -> usize {
+    let mut ret = c;
+    visited.insert(c);
+
+    for &ne in &v[&c] {
+        if visited.contains(&ne) { continue }
+        ret = ret.max(dfs(ne, v, visited));
+    }
+
+    ret
+}
+
 fn main() {
     input! {
-
+        n: usize,
+        ab: [(usize, usize); n]
     }
+    let mut v = FxHashMap::default();
+    for (a, b) in ab {
+        (*v.entry(a).or_insert(vec![])).push(b);
+        (*v.entry(b).or_insert(vec![])).push(a);
+    }
+
+    if !v.contains_key(&1) {
+        println!("1");
+        return;
+    }
+
+    let mut visited = FxHashSet::from_iter([1]);
+    let ans = dfs(1, &v, &mut visited);
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

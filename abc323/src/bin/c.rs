@@ -19,11 +19,46 @@ use num_integer::{gcd, gcd_lcm};
 use num_traits::{abs, pow};
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
+use rustc_hash::FxHashSet;
 use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        m: usize,
+        a: [usize; m],
+        s: [Bytes; n]
+    }
 
+    let mut ss = vec![FxHashSet::default(); n];
+    for (i, s) in s.iter().enumerate() {
+        for (j, &c) in s.iter().enumerate() {
+            if c == b'o' {
+                ss[i].insert(j);
+            }
+        }
+    }
+    let p = s.iter().map(|x| x.iter().enumerate().filter(|(_, &c)| c == b'o').map(|(i, _)| a[i]).sum::<usize>()).enumerate().map(|(i, x)| x + i + 1).collect_vec();
+    let mx = *p.iter().max().unwrap();
+
+    let sc = a.iter().copied().enumerate().sorted_by_key(|(_, x)| Reverse(*x)).collect_vec();
+
+    'a: for (i, &p) in p.iter().enumerate() {
+        let mut p = p;
+        if p == mx {
+            println!("0");
+            continue;
+        }
+        let mut ans = 0;
+        for &(j, sc) in &sc {
+            if ss[i].contains(&j) { continue }
+            p += sc;
+            ans += 1;
+            if p >= mx {
+                println!("{ans}");
+                continue 'a;
+            }
+        }
     }
 }
 

@@ -16,10 +16,48 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn cross(field: &[Vec<bool>], x: usize, y: usize) -> usize {
+    if !field[y][x] { return 0 }
+    let mut m = INF;
+    for (dx, dy) in [(1, 1), (1, -1), (-1, -1), (-1, 1)] {
+        let mut i = 0;
+        while field[(y as isize + dy * (i + 1) as isize) as usize][(x as isize + dx * (i + 1) as isize) as usize] {
+            i += 1;
+        }
+        if i == 0 { return 0 }
+        m = m.min(i);
+    }
+    m
+}
+
 fn main() {
     input! {
-
+        h: usize,
+        w: usize,
+        c: [Bytes; h]
     }
+
+    let mut cb = vec![vec![false; w + 2]; h + 2];
+    for i in 0..h + 2 {
+        for j in 0..w + 2 {
+            if i == 0 || j == 0 || i == h + 1 || j == w + 1 { continue }
+            if c[i - 1][j - 1] == b'#' {
+                cb[i][j] = true;
+            }
+        }
+    }
+
+    let mut cr = vec![vec![0; w]; h];
+    for i in 1..=h {
+        for j in 1..=w {
+            cr[i - 1][j - 1] = cross(&cb, j, i);
+        }
+    }
+
+    let mut ans = vec![0; h.min(w)];
+    cr.iter().flatten().for_each(|&x| if x != 0 { ans[x - 1] += 1 });
+
+    println!("{}", ans.iter().join(" "));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

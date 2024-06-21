@@ -23,8 +23,31 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        h: usize,
+        w: usize,
+        s: [Bytes; h]
     }
+
+    let mut dsu = Dsu::new(h * w);
+    for i in 0..w {
+        for j in 0..h {
+            if s[j][i] != b'#' { continue }
+            for di in -1..=1 {
+                for dj in -1..=1 {
+                    let (x, y) = (i.wrapping_add_signed(di), j.wrapping_add_signed(dj));
+                    if x >= w || y >= h { continue }
+                    if s[y][x] == b'#' {
+                        dsu.merge(i + j * w, x + y * w);
+                    }
+                }
+            }
+        }
+    }
+
+    let g = dsu.groups();
+
+    let ans = g.iter().filter(|x| s[x.last().unwrap() / w][x.last().unwrap() % w] == b'#').collect_vec().len();
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

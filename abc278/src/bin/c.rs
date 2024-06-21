@@ -18,7 +18,28 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        q: usize,
+        tab: [(usize, usize, usize); q]
+    }
 
+    let mut flw = FxHashSet::default();
+    for (t, a, b) in tab {
+        match t {
+            1 => {
+                flw.insert((a, b));
+            }
+            2 => {
+                flw.remove(&(a, b));
+            }
+            _ => {
+                if flw.contains(&(a, b)) && flw.contains(&(b, a)) {
+                    println!("Yes");
+                } else {
+                    println!("No");
+                }
+            }
+        }
     }
 }
 

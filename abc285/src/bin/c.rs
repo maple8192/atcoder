@@ -18,8 +18,18 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        s: Bytes
     }
+
+    let mut ans = 1;
+    for (i, mut c) in s.into_iter().rev().enumerate() {
+        if i >= 1 {
+            c += 1;
+        }
+        ans += (c - b'A') as usize * 26usize.pow(i as u32);
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

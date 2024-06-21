@@ -19,8 +19,22 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        s: [String; n]
     }
+
+    let mut set = FxHashSet::default();
+    let mut ss = FxHashSet::default();
+    let mut sin = 0;
+    for s in s {
+        let rev = s.chars().rev().collect::<String>();
+        if ss.contains(&s) { continue }
+        if rev == s { sin += 1; ss.insert(s); continue }
+        set.insert(s.chars().rev().collect());
+        set.insert(s);
+    }
+
+    println!("{}", set.len() / 2 + sin);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use std::cmp::{max, min};
+use std::cmp::{max, min, Reverse};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
@@ -16,11 +16,28 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
-
 fn main() {
     input! {
-
+        n: usize,
+        d: usize,
+        p: usize,
+        mut f: [usize; n]
     }
+
+    f.sort_by_key(|&x| Reverse(x));
+
+    let mut ans = 0;
+
+    for v in f.chunks(d) {
+        let s = v.iter().sum::<usize>();
+        if s < p {
+            ans += s;
+        } else {
+            ans += p;
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

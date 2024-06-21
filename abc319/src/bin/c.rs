@@ -19,8 +19,39 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        c: [[usize; 3]; 3]
     }
+
+    let mut count = 0;
+
+    let mut vec = (0..9).collect_vec();
+    while {
+        let mut row = vec![vec![]; 3];
+        let mut col = vec![vec![]; 3];
+        let mut lu = vec![];
+        let mut ru = vec![];
+
+        let mut g = false;
+
+        for (x, y) in vec.iter().map(|x| (x % 3, x / 3)) {
+            row[y].push(c[y][x]);
+            if row[y].len() == 3 && row[y][0] == row[y][1] { g = true; break }
+            col[x].push(c[y][x]);
+            if col[x].len() == 3 && col[x][0] == col[x][1] { g = true; break }
+            if x == y { lu.push(c[y][x]) }
+            if lu.len() == 3 && lu[0] == lu[1] { g = true; break }
+            if (x, y) == (0, 2) || (x, y) == (1, 1) || (x, y) == (2, 0) { ru.push(c[y][x]) }
+            if ru.len() == 3 && ru[0] == ru[1] { g = true; break }
+        }
+
+        if g {
+            count += 1;
+        }
+
+        vec.next_permutation()
+    } {}
+
+    println!("{:.15}", 1.0 - count as f64 / 362880.0);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

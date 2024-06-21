@@ -18,8 +18,34 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        s: [Bytes; 9]
     }
+
+    let mut ans = 0;
+    for x in 0..9 {
+        for y in 0..9 {
+            if s[y][x] != b'#' { continue }
+            for x2 in x + 1..9 {
+                for y2 in y..9 {
+                    if s[y2][x2] != b'#' { continue }
+                    let dx = x2 - x;
+                    let dy = y2 - y;
+
+                    let x3 = x2.wrapping_add_signed(-(dy as isize));
+                    let y3 = y2 + dx;
+                    if x3 >= 9 || y3 >= 9 || s[y3][x3] != b'#' { continue }
+
+                    let x4 = x3.wrapping_add_signed(-(dx as isize));
+                    let y4 = y3.wrapping_add_signed(-(dy as isize));
+                    if x4 >= 9 || y4 >= 9 || s[y4][x4] != b'#' { continue }
+
+                    ans += 1;
+                }
+            }
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

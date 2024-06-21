@@ -18,7 +18,25 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        k: usize,
+        mut ab: [(usize, usize); n]
+    }
 
+    ab.sort_by_key(|x| x.0);
+
+    let mut med = ab.iter().map(|x| x.1).sum::<usize>();
+    if med <= k {
+        println!("1");
+        return;
+    }
+
+    for (a, b) in ab {
+        med -= b;
+        if med <= k {
+            println!("{}", a + 1);
+            return;
+        }
     }
 }
 

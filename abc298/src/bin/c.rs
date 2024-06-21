@@ -7,6 +7,7 @@ use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
 use bstr::ByteSlice;
 use easy_ext::ext;
+use indexing::container_traits::Pushable;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
 use num_integer::{gcd, gcd_lcm};
@@ -18,7 +19,46 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        q: usize
+    }
+    let mut query = vec![];
+    for _ in 0..q {
+        input! { t: usize }
+        match t {
+            1 => {
+                input! { i: usize, j: usize }
+                query.push((t, i, j));
+            }
+            _ => {
+                input! { i: usize }
+                query.push((t, i, 0));
+            }
+        }
+    }
 
+    let mut bx = vec![BTreeMap::new(); n];
+    let mut cd = vec![BTreeSet::new(); 200000];
+
+    for (t, i, j) in query {
+        match t {
+            1 => {
+                cd[i - 1].insert(j);
+                *bx[j - 1].entry(i).or_insert(0) += 1;
+            }
+            2 => {
+                let mut ans = vec![];
+                for (&c, &n) in &bx[i - 1] {
+                    for _ in 0..n {
+                        ans.push(c);
+                    }
+                }
+                println!("{}", ans.iter().join(" "));
+            }
+            _ => {
+                println!("{}", cd[i - 1].iter().join(" "));
+            }
+        }
     }
 }
 

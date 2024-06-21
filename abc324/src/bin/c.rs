@@ -23,8 +23,42 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        t: Bytes,
+        s: [Bytes; n]
     }
+
+    let mut ans = vec![];
+    'a: for (i, s) in s.into_iter().enumerate() {
+        if s.len() == t.len() {
+            if s == t || s.iter().zip(&t).filter(|(a, b)| a != b).collect_vec().len() == 1 {
+                ans.push(i + 1);
+            }
+        } else if s.len() == t.len() - 1 {
+            let mut f = false;
+            for (j, &c) in s.iter().enumerate() {
+                if !f && c != t[j] || f && c != t[j + 1] {
+                    if f { continue 'a }
+                    if c != t[j + 1] { continue 'a }
+                    f = true;
+                }
+            }
+            ans.push(i + 1);
+        } else if s.len() == t.len() + 1 {
+            let mut f = false;
+            for (j, &c) in t.iter().enumerate() {
+                if !f && c != s[j] || f && c != s[j + 1] {
+                    if f { continue 'a }
+                    if c != s[j + 1] { continue 'a }
+                    f = true;
+                }
+            }
+            ans.push(i + 1);
+        }
+    }
+
+    println!("{}", ans.len());
+    println!("{}", ans.iter().join(" "));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

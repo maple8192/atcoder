@@ -18,8 +18,55 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        s: Bytes,
+        t: Bytes
     }
+
+    let mut sn = vec![];
+    let mut sr = vec![];
+    let mut i = 0;
+    while i < s.len() {
+        if i == s.len() - 1 {
+            sn.push(s[i]);
+            i += 1;
+        } else if s[i] == s[i + 1] {
+            sn.push(s[i]);
+            sn.push(s[i]);
+            let c = s[i];
+            let j = i;
+            while i < s.len() && s[i] == c {
+                i += 1;
+            }
+            sr.push(i - j);
+        } else {
+            sn.push(s[i]);
+            i += 1;
+        }
+    }
+
+    let mut tn = vec![];
+    let mut tr = vec![];
+    let mut i = 0;
+    while i < t.len() {
+        if i == t.len() - 1 {
+            tn.push(t[i]);
+            i += 1;
+        } else if t[i] == t[i + 1] {
+            tn.push(t[i]);
+            tn.push(t[i]);
+            let c = t[i];
+            let j = i;
+            while i < t.len() && t[i] == c {
+                i += 1;
+            }
+            tr.push(i - j);
+        } else {
+            tn.push(t[i]);
+            i += 1;
+        }
+    }
+
+    println!("{}", (sn == tn && sr.iter().zip(&tr).all(|(a, b)| a <= b)).yes_no());
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

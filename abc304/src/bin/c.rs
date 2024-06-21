@@ -18,8 +18,26 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        d: usize,
+        xy: [(isize, isize); n]
     }
+
+    let mut dsu = Dsu::new(n);
+    for i in 0..n {
+        for j in i + 1..n {
+            if (xy[i].0 - xy[j].0).pow(2) + (xy[i].1 - xy[j].1).pow(2) <= d.pow(2) as isize {
+                dsu.merge(i, j);
+            }
+        }
+    }
+
+    let groups = dsu.groups().into_iter().find(|x| x.iter().any(|&y| y == 0)).unwrap();
+    let mut ans = vec![false; n];
+    for m in groups {
+        ans[m] = true;
+    }
+    println!("{}", ans.into_iter().map(|x| if x { "Yes" } else { "No" }).join("\n"));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

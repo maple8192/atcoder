@@ -12,7 +12,7 @@ use ac_library::{Additive, Dsu, FenwickTree, LazySegtree, Monoid, Segtree, suffi
 use ac_library::{convolution, floor_sum, ModInt998244353};
 use ac_library::{Max, Min};
 use easy_ext::ext;
-use itertools::{Itertools};
+use itertools::{multizip, Itertools};
 use nalgebra::min;
 use num_bigint::BigUint;
 use num_integer::{gcd, gcd_lcm};
@@ -23,8 +23,24 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        m: usize,
+        mut s: [Bytes; 3]
     }
+
+    let mut ans = INF;
+    for i in 0..10 {
+        if s.iter().any(|x| x.iter().all(|&y| y != b'0' + i as u8)) { continue }
+        
+        let a = s.iter().map(|x| x.iter().enumerate().filter(|(_, &x)| x == b'0' + i as u8).map(|(i, _)| i).collect_vec()).collect_vec();
+
+        println!("{a:?}");
+    }
+
+    if ans == INF {
+        println!("-1");
+        return;
+    }
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

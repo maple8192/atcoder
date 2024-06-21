@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use std::cmp::{max, min};
+use std::cmp::{max, min, Reverse};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
@@ -19,8 +19,29 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        fs: [(usize, usize); n]
     }
+
+    let mut hm = FxHashMap::default();
+    for (f, s) in fs {
+        (*hm.entry(f).or_insert(vec![])).push(s);
+    }
+    for (_, v) in &mut hm {
+        v.sort_by_key(|&x| Reverse(x));
+    }
+
+    let mut ans = 0;
+    for (_, v) in &hm {
+        if v.len() >= 2 {
+            ans = ans.max(v[0] + v[1] / 2);
+        }
+    }
+
+    let fs = hm.iter().map(|(_, v)| v.first().unwrap()).sorted_by_key(|&&x| Reverse(x)).collect_vec();
+    if fs.len() >= 2 { ans = ans.max(fs[0] + fs[1]) }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

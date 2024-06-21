@@ -18,8 +18,17 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        m: usize,
+        uv: [(Usize1, Usize1); m]
     }
+
+    let mut dsu = Dsu::new(n);
+    for (u, v) in uv {
+        dsu.merge(u, v);
+    }
+
+    println!("{}", dsu.groups().len());
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

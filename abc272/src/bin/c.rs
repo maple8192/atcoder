@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use std::cmp::{max, min};
+use std::cmp::{max, min, Reverse};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
@@ -18,8 +18,20 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        mut a: [usize; n]
     }
+    a.sort_by_key(|&x| Reverse(x));
+
+    let (even, odd): (Vec<_>, Vec<_>) = a.into_iter().partition(|&x| x % 2 == 0);
+    if even.len() < 2 && odd.len() < 2 {
+        println!("-1");
+        return;
+    }
+    let mut ans = 0;
+    if even.len() >= 2 { ans = ans.max(even[0] + even[1]) }
+    if odd.len() >= 2 { ans = ans.max(odd[0] + odd[1]) }
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

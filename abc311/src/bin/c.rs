@@ -4,7 +4,7 @@
 use std::cmp::{max, min};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
-use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
+use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, SccGraph, Segtree};
 use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
@@ -16,11 +16,37 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn dfs(c: usize, a: &[usize], p: &mut Vec<usize>, s: &mut FxHashSet<usize>) {
+    p.push(c);
+    s.insert(c);
+
+    if s.contains(&a[c]) { return }
+    dfs(a[c], a, p, s);
+}
 
 fn main() {
     input! {
-
+        n: usize,
+        a: [Usize1; n]
     }
+
+    let mut scc = SccGraph::new(n);
+    for (i, ai) in a.iter().enumerate() {
+        scc.add_edge(i, *ai);
+    }
+
+    let v = scc.scc();
+    let mut ans = vec![];
+    for v in v {
+        if v.len() != 1 {
+            let mut s = FxHashSet::default();
+            dfs(v[0], &a, &mut ans, &mut s);
+            break;
+        }
+    }
+
+    println!("{}", ans.len());
+    println!("{}", ans.iter().map(|x| x + 1).join(" "));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

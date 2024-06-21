@@ -18,8 +18,43 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        s: Bytes
     }
+
+    let mut ans = -1;
+
+    let mut i = 0;
+    while i < n {
+        if s[i] == b'o' {
+            let mut d = 0;
+            while i < n && s[i] == b'o' {
+                i += 1;
+                d += 1;
+            }
+            if i == n { continue }
+            ans = ans.max(d);
+        } else {
+            i += 1;
+        }
+    }
+
+    let mut i = n as isize - 1;
+    while i >= 0 {
+        if s[i as usize] == b'o' {
+            let mut d = 0;
+            while i >= 0 && s[i as usize] == b'o' {
+                i -= 1;
+                d += 1;
+            }
+            if i == -1 { continue }
+            ans = ans.max(d);
+        } else {
+            i -= 1;
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

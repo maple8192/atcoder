@@ -18,8 +18,38 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        m: usize,
+        mut h: usize,
+        k: usize,
+        s: Bytes,
+        xy: [(isize, isize); m]
     }
+
+    let mut xy = xy.into_iter().collect::<FxHashSet<_>>();
+
+    let (mut cx, mut cy) = (0, 0);
+    for ch in s {
+        if h == 0 {
+            println!("No");
+            return;
+        }
+        match ch {
+            b'R' => cx += 1,
+            b'L' => cx -= 1,
+            b'U' => cy += 1,
+            _ => cy -= 1
+        }
+        h -= 1;
+        if xy.contains(&(cx, cy)) {
+            if h < k {
+                h = k;
+                xy.remove(&(cx, cy));
+            }
+        }
+    }
+
+    println!("Yes");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

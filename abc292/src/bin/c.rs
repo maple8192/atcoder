@@ -18,8 +18,18 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize
     }
+
+    let mut ans = 0;
+    for ab in 1..n {
+        let cd = n - ab;
+        
+        let s = ab.factors().iter().map(|(_, n)| n + 1).fold(1, |acc, x| acc * x);
+        ans += s * cd.factors().iter().map(|(_, n)| n + 1).fold(1, |acc, x| acc * x);
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

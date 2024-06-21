@@ -21,10 +21,25 @@ use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
 use superslice::Ext;
 
+fn rec(n: usize, c: usize, list: &mut BTreeSet<usize>) {
+    list.insert(n);
+
+    for i in 0..c {
+        rec(n * 10 + i, i, list);
+    }
+}
+
 fn main() {
     input! {
-
+        k: usize
     }
+
+    let mut list = BTreeSet::new();
+    for i in 1..=9 {
+        rec(i, i, &mut list);
+    }
+
+    println!("{}", list.iter().collect_vec()[k - 1]);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

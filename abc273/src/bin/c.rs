@@ -18,7 +18,18 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        mut a: [usize; n]
+    }
 
+    a.sort();
+    let nm = a.iter().collect::<FxHashSet<_>>().iter().sorted().copied().copied().collect_vec();
+
+    for &m in nm.iter().rev() {
+        println!("{}", a.upper_bound(&m) - a.lower_bound(&m));
+    }
+    for _ in 0..n - nm.len() {
+        println!("0");
     }
 }
 

@@ -4,6 +4,7 @@
 use std::cmp::{max, min};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
+use std::vec;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
 use bstr::ByteSlice;
 use easy_ext::ext;
@@ -18,8 +19,81 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        ha: usize,
+        wa: usize,
+        a: [Bytes; ha],
+        hb: usize,
+        wb: usize,
+        b: [Bytes; hb],
+        hx: usize,
+        wx: usize,
+        x: [Bytes; hx]
     }
+
+    let mut a_top = INF;
+    let mut a_bot = 0;
+    let mut a_left = INF;
+    let mut a_right = 0;
+    for (i, r) in a.iter().enumerate() {
+        for (j, c) in r.iter().enumerate() {
+            if *c == b'#' {
+                a_top = a_top.min(i);
+                a_bot = a_bot.max(i);
+                a_left = a_left.min(j);
+                a_right = a_right.max(j);
+            }
+        }
+    }
+
+    let mut b_top = INF;
+    let mut b_bot = 0;
+    let mut b_left = INF;
+    let mut b_right = 0;
+    for (i, r) in b.iter().enumerate() {
+        for (j, c) in r.iter().enumerate() {
+            if *c == b'#' {
+                b_top = b_top.min(i);
+                b_bot = b_bot.max(i);
+                b_left = b_left.min(j);
+                b_right = b_right.max(j);
+            }
+        }
+    }
+
+    if a_bot - a_top + 1 > hx || b_bot - b_top + 1 > hx || a_right - a_left + 1 > wx || b_right - b_left + 1 > wx {
+        println!("No");
+        return;
+    }
+
+    for ay in 0..hx - (a_bot - a_top) {
+        for ax in 0..wx - (a_right - a_left) {
+            for by in 0..hx - (b_bot - b_top) {
+                for bx in 0..wx - (b_right - a_left) {
+                    let mut rx = vec![vec![b'.'; wx]; hx];
+                    for i in 0..=a_bot - a_top {
+                        for j in 0..=a_right - a_left {
+                            if a[a_top + i][a_left + j] == b'#' {
+                                rx[ay + i][ax + j] = b'#';
+                            }
+                        }
+                    }
+                    for i in 0..=b_bot - b_top {
+                        for j in 0..=b_right - b_left {
+                            if b[b_top + i][b_left + j] == b'#' {
+                                rx[by + i][bx + j] = b'#';
+                            }
+                        }
+                    }
+                    if x == rx {
+                        println!("Yes");
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    println!("No");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

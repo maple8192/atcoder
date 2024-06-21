@@ -18,8 +18,20 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        a: [usize; 3 * n]
     }
+
+    let mut f = vec![0; n];
+    let mut ans = vec![];
+    for ai in a {
+        if f[ai - 1] == 1 {
+            ans.push(ai);
+        }
+        f[ai - 1] += 1;
+    }
+
+    println!("{}", ans.iter().join(" "));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

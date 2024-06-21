@@ -18,8 +18,67 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        s: Bytes,
+        t: Bytes
     }
+
+    let mut ss = FxHashMap::default();
+    let mut sa = 0;
+    for ch in s {
+        if ch != b'@' {
+            *ss.entry(ch).or_insert(0) += 1;
+        } else {
+            sa += 1;
+        }
+    }
+
+    let mut st = FxHashMap::default();
+    let mut ta = 0;
+    for ch in t {
+        if ch != b'@' {
+            *st.entry(ch).or_insert(0) += 1;
+        } else {
+            ta += 1;
+        }
+    }
+
+    let mut diff_s = FxHashMap::default();
+    let mut diff_t = FxHashMap::default();
+    for (k, &v) in &ss {
+        if st.contains_key(k) {
+            if v > st[k] {
+                diff_t.insert(k, v - st[k]);
+            } else if st[k] > v {
+                diff_s.insert(k, st[k] - v);
+            }
+        } else {
+            diff_t.insert(k, v);
+        }
+    }
+    for (k, &v) in &st {
+        if !ss.contains_key(k) {
+            diff_s.insert(k, v);
+        }
+    }
+
+    if !diff_s.keys().all(|&&ch| ch == b'a' || ch == b't' || ch == b'c' || ch == b'o' || ch == b'd' || ch == b'e' || ch == b'r') {
+        println!("No");
+        return;
+    }
+    if !diff_t.keys().all(|&&ch| ch == b'a' || ch == b't' || ch == b'c' || ch == b'o' || ch == b'd' || ch == b'e' || ch == b'r') {
+        println!("No");
+        return;
+    }
+    if diff_s.iter().map(|(_, v)| v).sum::<usize>() > sa {
+        println!("No");
+        return;
+    }
+    if diff_t.iter().map(|(_, v)| v).sum::<usize>() > ta {
+        println!("No");
+        return;
+    }
+
+    println!("Yes");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

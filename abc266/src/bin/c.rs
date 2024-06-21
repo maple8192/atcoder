@@ -16,10 +16,26 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn cross(ax: isize, ay: isize, bx: isize, by: isize) -> isize {
+    ax * by - ay * bx
+}
+
 fn main() {
     input! {
-
+        (ax, ay): (isize, isize),
+        (bx, by): (isize, isize),
+        (cx, cy): (isize, isize),
+        (dx, dy): (isize, isize)
     }
+
+    let crs = vec![
+        cross(bx - ax, by - ay, cx - bx, cy - by),
+        cross(cx - bx, cy - by, dx - cx, dy - cy),
+        cross(dx - cx, dy - cy, ax - dx, ay - dy),
+        cross(ax - dx, ay - dy, bx - ax, by - ay)
+    ];
+
+    println!("{}", crs.iter().map(|&x| x > 0).all_equal().yes_no());
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

@@ -18,8 +18,19 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        x: isize,
+        mut a: [isize; n]
     }
+    a.sort();
+
+    for &ai in &a {
+        if a.binary_search(&(ai - x)).is_ok() {
+            println!("Yes");
+            return;
+        }
+    }
+    println!("No");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
