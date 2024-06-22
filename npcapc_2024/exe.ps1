@@ -1,0 +1,1 @@
+Param($P); cargo run --bin npcapc_2024-$P
