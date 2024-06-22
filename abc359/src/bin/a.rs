@@ -21,11 +21,17 @@ use superslice::Ext;
 fn main() {
     input! {
         n: usize,
-        m: usize,
-        k: usize
+        s: [String; n]
     }
 
-    
+    let mut ans = 0;
+    for i in s {
+        if i == "Takahashi".to_string() {
+            ans += 1;
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

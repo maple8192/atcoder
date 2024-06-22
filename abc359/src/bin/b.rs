@@ -21,11 +21,17 @@ use superslice::Ext;
 fn main() {
     input! {
         n: usize,
-        m: usize,
-        k: usize
+        a: [usize; 2 * n]
     }
 
-    
+    let mut ans = 0;
+    for i in 0..2 * n - 2 {
+        if a[i] == a[i + 2] {
+            ans += 1;
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

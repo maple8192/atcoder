@@ -20,12 +20,32 @@ use superslice::Ext;
 
 fn main() {
     input! {
-        n: usize,
-        m: usize,
-        k: usize
+        mut sx: isize,
+        sy: isize,
+        mut tx: isize,
+        ty: isize
+    }
+    if sy % 2 == 0 && sx % 2 == 1 || sy % 2 == 1 && sx % 2 == 0 {
+        sx -= 1;
+    }
+    if ty % 2 == 0 && tx % 2 == 1 || ty % 2 == 1 && tx % 2 == 0 {
+        tx -= 1;
     }
 
-    
+    let dy = (ty - sy).abs();
+    if tx >= sx {
+        if tx <= sx + dy {
+            println!("{dy}");
+        } else {
+            println!("{}", dy + (tx - sx - dy) / 2);
+        }
+    } else {
+        if tx >= sx - dy {
+            println!("{dy}");
+        } else {
+            println!("{}", dy + (sx - dy - tx) / 2);
+        }
+    }
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
