@@ -19,8 +19,21 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        a: usize,
+        b: usize,
+        c: usize
     }
+
+    let mut ans = INF;
+    for i in (0..10000).take_while(|i| a * i <= n) {
+        for j in (0..10000).take_while(|j| a * i + b * j <= n) {
+            if (n - a * i - b * j) % c != 0 { continue }
+            ans = ans.min(i + j + (n - a * i - b * j) / c);
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

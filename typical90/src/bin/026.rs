@@ -16,11 +16,45 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn dfs(c: usize, f: bool, v: &[Vec<usize>], e: &mut FxHashSet<usize>, p: &mut FxHashSet<usize>) {
+    p.insert(c);
+
+    if f { e.insert(c); }
+
+    for &ne in &v[c] {
+        if p.contains(&ne) { continue }
+        dfs(ne, !f, v, e, p);
+    }
+}
 
 fn main() {
     input! {
-
+        n: usize,
+        ab: [(Usize1, Usize1); n - 1]
     }
+
+    let mut v = vec![vec![]; n];
+    for (a, b) in ab {
+        v[a].push(b);
+        v[b].push(a);
+    }
+
+    let st = v.iter().enumerate().find(|(_, x)| x.len() == 1).unwrap().0;
+    let mut e = FxHashSet::default();
+    let mut p = FxHashSet::default();
+    dfs(st, true, &v, &mut e, &mut p);
+
+    let ans = if e.len() >= n / 2 {
+        e.iter().take(n / 2).map(|x| x + 1).collect_vec()
+    } else {
+        let mut t = vec![];
+        for i in 0..n {
+            if !e.contains(&i) { t.push(i) }
+        }
+        t.iter().take(n / 2).map(|x| x + 1).collect_vec()
+    };
+
+    println!("{}", ans.iter().join(" "));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

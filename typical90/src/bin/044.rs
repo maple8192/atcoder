@@ -19,7 +19,26 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        q: usize,
+        mut a: [usize; n],
+        txy: [(usize, usize, usize); q]
+    }
 
+    let mut st = 0;
+    for (t, x, y) in txy {
+        match t {
+            1 => {
+                swap!(&mut a[(st + x - 1) % n], &mut a[(st + y - 1) % n]);
+            }
+            2 => {
+                st += n - 1;
+                st %= n;
+            }
+            _ => {
+                println!("{}", a[(st + x - 1) % n]);
+            }
+        }
     }
 }
 

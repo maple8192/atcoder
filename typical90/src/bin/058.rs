@@ -16,11 +16,39 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
-
 fn main() {
     input! {
-
+        n: usize,
+        mut k: usize
     }
+
+    let mut dp = vec![vec![0; 61]; 100000];
+    for i in 0..100000 {
+        let mut p = i;
+        let mut sum = 0;
+        while p != 0 {
+            sum += p % 10;
+            p /= 10;
+        }
+        dp[i][0] = (i + sum) % 100000;
+    }
+    for i in 1..61 {
+        for j in 0..100000 {
+            dp[j][i] = dp[dp[j][i - 1]][i - 1];
+        }
+    }
+
+    let mut c = n;
+    let mut d = 0;
+    while k != 0 {
+        if k & 1 != 0 {
+            c = dp[c][d];
+        }
+        d += 1;
+        k >>= 1;
+    }
+
+    println!("{c}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

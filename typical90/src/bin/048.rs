@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use std::cmp::{max, min};
+use std::cmp::{max, min, Reverse};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
@@ -19,8 +19,26 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        k: usize,
+        ab: [(usize, usize); n]
     }
+
+    let mut heap = BinaryHeap::new();
+    for (a, b) in ab {
+        heap.push((b, a - b));
+    }
+
+    let mut ans = 0;
+    for _ in 0..k {
+        let (p, f) = heap.pop().unwrap();
+        ans += p;
+        if f != 0 {
+            heap.push((f, 0));
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

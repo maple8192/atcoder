@@ -9,6 +9,7 @@ use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
+use num::{BigUint, FromPrimitive};
 use num_integer::{gcd, gcd_lcm};
 use omniswap::swap;
 use proconio::{fastout, input};
@@ -19,7 +20,16 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        a: usize,
+        b: usize,
+        c: usize
+    }
 
+    let rhs = BigUint::from_usize(c).unwrap().pow(b as u32);
+    if BigUint::from_usize(a).unwrap() < rhs {
+        println!("Yes");
+    } else {
+        println!("No");
     }
 }
 

@@ -10,51 +10,18 @@ use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
 use num_integer::{gcd, gcd_lcm};
+use num_rational::Ratio;
+use num_traits::{FromPrimitive, ToPrimitive};
 use omniswap::swap;
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
-
 fn main() {
     input! {
-        n: usize,
-        a: [[usize; n]; n],
-        m: usize,
-        xy: [(usize, usize); m]
+
     }
-    let xy = FxHashSet::from_iter(xy);
-
-    let mut ans = INF;
-
-    let mut perm = (0..n).collect_vec();
-    while {
-        let mut f = false;
-        for (x, y) in perm.iter().tuple_windows() {
-            if xy.contains(&(min(*x, *y) + 1, max(*x, *y) + 1)) {
-                f = true;
-                break;
-            }
-        }
-
-        if !f {
-            let mut sum = 0;
-            for (i, &p) in perm.iter().enumerate() {
-                sum += a[p][i];
-            }
-            ans = ans.min(sum);
-        }
-
-        perm.next_permutation()
-    } {}
-
-    if ans == INF {
-        println!("-1");
-        return;
-    }
-
-    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

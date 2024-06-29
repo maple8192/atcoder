@@ -19,8 +19,14 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        mut a: [usize; n],
+        mut b: [usize; n]
     }
+    a.sort();
+    b.sort();
+
+    println!("{}", a.iter().zip(&b).map(|(&a, &b)| (a as isize - b as isize).abs() as usize).sum::<usize>());
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

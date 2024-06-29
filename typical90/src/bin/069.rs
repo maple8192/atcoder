@@ -19,8 +19,18 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        k: usize
     }
+
+    if n == 1 {
+        println!("{k}");
+        return;
+    }
+
+    let mut ans = ModInt1000000007::new(k) * (k - 1);
+    ans *= ModInt1000000007::new(k - 2).pow(n as u64 - 2);
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

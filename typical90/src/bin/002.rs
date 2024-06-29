@@ -16,11 +16,39 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn dfs(n: usize, p: usize, c: usize, s: &mut VecDeque<u8>, list: &mut BTreeSet<Vec<u8>>) {
+    if n == p {
+        if c == 0 {
+            list.insert(s.iter().copied().collect_vec());
+        }
+        return;
+    }
+
+    if c == 0 {
+        s.push_back(b'(');
+        dfs(n, p + 1, c + 1, s, list);
+        s.pop_back();
+    } else {
+        s.push_back(b'(');
+        dfs(n, p + 1, c + 1, s, list);
+        s.pop_back();
+        s.push_back(b')');
+        dfs(n, p + 1, c - 1, s, list);
+        s.pop_back();
+    }
+}
 
 fn main() {
     input! {
-
+        n: usize
     }
+
+    let mut list = BTreeSet::new();
+    let mut s = VecDeque::new();
+    dfs(n, 0, 0, &mut s, &mut list);
+
+    if list.is_empty() { return }
+    println!("{}", list.iter().map(|x| x.to_str().unwrap()).join("\n"));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

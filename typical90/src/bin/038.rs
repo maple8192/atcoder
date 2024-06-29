@@ -19,7 +19,20 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        a: usize,
+        b: usize
+    }
 
+    let gcd = gcd(a, b);
+    let a = a / gcd;
+    if let Some(s) = a.checked_mul(b) {
+        if s > 1000000000000000000 {
+            println!("Large");
+        } else {
+            println!("{s}");
+        }
+    } else {
+        println!("Large");
     }
 }
 

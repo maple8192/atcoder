@@ -19,8 +19,21 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        l: usize
     }
+
+    let mut dp = vec![ModInt1000000007::new(0); n + 1];
+    dp[0] = ModInt1000000007::new(1);
+    for i in 0..n {
+        let c = dp[i];
+        dp[i + 1] += c;
+        if i + l <= n {
+            dp[i + l] += c;
+        }
+    }
+
+    println!("{}", dp[n]);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

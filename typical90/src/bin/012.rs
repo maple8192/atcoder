@@ -19,7 +19,44 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        h: usize,
+        w: usize,
+        q: usize
+    }
+    let mut query = vec![];
+    for _ in 0..q {
+        input! { t: usize }
+        if t == 1 {
+            input! { r: Usize1, c: Usize1 }
+            query.push((t, r, c, 0, 0));
+        } else {
+            input! { ra: Usize1, ca: Usize1, rb: Usize1, cb: Usize1 }
+            query.push((t, ra, ca, rb, cb));
+        }
+    }
 
+    let mut field = vec![vec![false; w]; h];
+    let mut dsu = Dsu::new(w * h);
+    for (t, a, b, c, d) in query {
+        if t == 1  {
+            field[a][b] = true;
+            for (dx, dy) in DIR4 {
+                let x = b.wrapping_add_signed(dx);
+                let y = a.wrapping_add_signed(dy);
+                if x >= w || y >= h { continue }
+
+                if field[y][x] {
+                    dsu.merge(x + y * w, b + a * w);
+                }
+            }
+        } else {
+            if !field[a][b] || !field[c][d] {
+                println!("No");
+                continue;
+            }
+
+            println!("{}", dsu.same(b + a * w, d + c * w).yes_no());
+        }
     }
 }
 

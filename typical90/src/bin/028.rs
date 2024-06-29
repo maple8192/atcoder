@@ -19,8 +19,40 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        lr: [(usize, usize, usize, usize); n]
     }
+
+    let s = 1000;
+    let mut fld = vec![vec![0; s + 1]; s + 1];
+
+    for (lx, ly, rx, ry) in lr {
+        fld[ly][lx] += 1;
+        fld[ly][rx] -= 1;
+        fld[ry][lx] -= 1;
+        fld[ry][rx] += 1;
+    }
+
+    for i in 0..s + 1 {
+        for j in 1..s + 1 {
+            fld[i][j] += fld[i][j - 1];
+        }
+    }
+    for i in 1..s + 1 {
+        for j in 0..s + 1 {
+            fld[i][j] += fld[i - 1][j];
+        }
+    }
+
+    let mut ans = vec![0; n];
+    for row in fld {
+        for n in row {
+            if n == 0 { continue }
+            ans[(n - 1) as usize] += 1;
+        }
+    }
+
+    println!("{}", ans.iter().join("\n"));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

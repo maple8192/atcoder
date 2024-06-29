@@ -19,8 +19,28 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        k: usize,
+        a: [usize; n]
     }
+
+    let mut ans = 0;
+    let mut j = 0;
+    let mut kinds = FxHashMap::default();
+    for i in 0..n {
+        while j < n && (!kinds.contains_key(&a[j]) && kinds.len() + 1 <= k || kinds.contains_key(&a[j])) {
+            *kinds.entry(a[j]).or_insert(0) += 1;
+            j += 1;
+            ans = ans.max(j - i);
+        }
+        if kinds[&a[i]] == 1 {
+            kinds.remove(&a[i]);
+        } else {
+            *kinds.get_mut(&a[i]).unwrap() -= 1;
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

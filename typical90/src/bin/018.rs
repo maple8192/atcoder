@@ -3,6 +3,7 @@
 
 use std::cmp::{max, min};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
+use std::f64::consts::PI;
 use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
 use bstr::ByteSlice;
@@ -19,7 +20,21 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        t: f64,
+        l: f64,
+        x: f64,
+        y: f64,
+        q: usize,
+        e: [f64; q]
+    }
 
+    for e in e {
+        let cy = - (l / 2.0) * (e / t * 2.0 * PI).sin();
+        let cz = (l / 2.0) * (1.0 - (e / t * 2.0 * PI).cos());
+
+        let th = ((y - cy).abs().powf(2.0) + x.powf(2.0)).sqrt();
+
+        println!("{}", (cz / th).atan() * 180.0 / PI);
     }
 }
 

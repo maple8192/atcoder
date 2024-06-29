@@ -19,8 +19,29 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        mut n: Bytes,
+        k: usize
     }
+
+    if n.len() == 1 && n[0] == b'0' {
+        println!("0");
+        return;
+    }
+
+    for _ in 0..k {
+        let mut nn = n.iter().zip((0..n.len()).rev()).map(|(c, i)| (c - b'0') as usize * 8usize.pow(i as u32)).sum::<usize>();
+        let mut nine = vec![];
+        while nn != 0 {
+            nine.push(if nn % 9 == 8 { 5 + b'0' } else { (nn % 9) as u8 + b'0' });
+            nn /= 9;
+        }
+        while nine.len() > 1 && nine.last().unwrap() == &b'0' {
+            nine.truncate(nine.len() - 1);
+        }
+        n = nine.iter().rev().copied().collect_vec();
+    }
+
+    println!("{}", n.to_str().unwrap());
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

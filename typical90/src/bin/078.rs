@@ -19,8 +19,31 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        m: usize,
+        ab: [(Usize1, Usize1); m]
     }
+
+    let mut g = vec![vec![]; n];
+    for (a, b) in ab {
+        g[a].push(b);
+        g[b].push(a);
+    }
+
+    let mut ans = 0;
+    for (i, v) in g.iter().enumerate() {
+        let mut c = 0;
+        for &e in v {
+            if e < i {
+                c += 1;
+            }
+        }
+        if c == 1 {
+            ans += 1;
+        }
+    }
+
+    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

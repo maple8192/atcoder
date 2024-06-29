@@ -19,8 +19,21 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        a: [[usize; 6]; n]
     }
+
+    let mut dp = vec![vec![ModInt1000000007::new(0); 6]; n];
+    for (i, &ai) in a[0].iter().enumerate() {
+        dp[0][i] = ModInt1000000007::new(ai);
+    }
+    for i in 1..n {
+        for j in 0..6 {
+            dp[i][j] = dp[i - 1][j] * a[i].iter().sum::<usize>();
+        }
+    }
+
+    println!("{}", dp[n - 1].iter().sum::<ModInt1000000007>());
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

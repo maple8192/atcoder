@@ -19,7 +19,22 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        mut a: [usize; n],
+        q: usize,
+        b: [usize; q]
+    }
+    a.sort();
 
+    for b in b {
+        let i = a.lower_bound(&b);
+        if i == 0 {
+            println!("{}", a[i] - b);
+        } else if i == n {
+            println!("{}", b - a[i - 1]);
+        } else {
+            println!("{}", min(a[i] - b, b - a[i - 1]));
+        }
     }
 }
 

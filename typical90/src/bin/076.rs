@@ -19,8 +19,32 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        a: [usize; n]
     }
+
+    if a.iter().sum::<usize>() % 10 != 0 {
+        println!("No");
+        return;
+    }
+    let p = a.iter().sum::<usize>() / 10;
+    let a = a.iter().chain(&a).copied().collect_vec();
+
+    let mut j = 0;
+    let mut s = 0;
+    for i in 0..2 * n {
+        while j < 2 * n && s < p {
+            s += a[j];
+            j += 1;
+        }
+        if s == p {
+            println!("Yes");
+            return;
+        }
+        s -= a[i];
+    }
+
+    println!("No");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

@@ -9,6 +9,7 @@ use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
+use libm::log2;
 use num_integer::{gcd, gcd_lcm};
 use omniswap::swap;
 use proconio::{fastout, input};
@@ -19,8 +20,12 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize
     }
+
+    let fact = n.factors().iter().map(|(_, i)| i).sum::<usize>();
+
+    println!("{}", log2(fact as f64).ceil() as usize);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

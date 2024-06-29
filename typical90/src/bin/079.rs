@@ -19,7 +19,36 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        h: usize,
+        w: usize,
+        a: [[usize; w]; h],
+        b: [[usize; w]; h]
+    }
 
+    let mut diff = vec![vec![0isize; w]; h];
+    for i in 0..h {
+        for j in 0..w {
+            diff[i][j] = b[i][j] as isize - a[i][j] as isize;
+        }
+    }
+
+    let mut ans = 0;
+    for i in 0..h - 1 {
+        for j in 0..w - 1 {
+            let d = -diff[i][j];
+            diff[i][j] += d;
+            diff[i + 1][j] += d;
+            diff[i][j + 1] += d;
+            diff[i + 1][j + 1] += d;
+            ans += d.abs();
+        }
+    }
+
+    if diff.iter().all(|x| x.iter().all(|&y| y == 0)) {
+        println!("Yes");
+        println!("{ans}");
+    } else {
+        println!("No");
     }
 }
 

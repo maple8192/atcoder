@@ -16,10 +16,15 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
-
 fn main() {
     input! {
-
+        h: usize,
+        w: usize,
+        rs: Usize1,
+        cs: Usize1,
+        rt: Usize1,
+        ct: Usize1,
+        s: [Bytes; h]
     }
 }
 

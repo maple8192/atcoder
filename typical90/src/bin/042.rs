@@ -19,7 +19,12 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        k: usize
+    }
 
+    if k % 9 != 0 {
+        println!("0");
+        return;
     }
 }
 

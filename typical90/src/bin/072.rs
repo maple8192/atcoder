@@ -16,10 +16,47 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn dfs(p: (usize, usize), l: usize, s: (usize, usize), c: &[Vec<u8>], path: &mut FxHashSet<(usize, usize)>) -> usize {
+    path.insert(p);
+
+    let mut ret = 0;
+    for (dx, dy) in DIR4 {
+        let nx = p.0.wrapping_add_signed(dx);
+        let ny = p.1.wrapping_add_signed(dy);
+        if nx >= c[0].len() || ny >= c.len() || c[ny][nx] == b'#' { continue }
+        if (nx, ny) == s {
+            ret = ret.max(l + 1);
+            continue;
+        }
+        if path.contains(&(nx, ny)) { continue }
+        ret = ret.max(dfs((nx, ny), l + 1, s, c, path));
+    }
+
+    path.remove(&p);
+    ret
+}
 
 fn main() {
     input! {
+        h: usize,
+        w: usize,
+        c: [Bytes; h]
+    }
 
+    let mut ans = 0;
+    for x in 0..w {
+        for y in 0..h {
+            if c[y][x] == b'#' { continue }
+
+            let mut path = FxHashSet::default();
+            ans = ans.max(dfs((x, y), 0, (x, y), &c, &mut path));
+        }
+    }
+
+    if ans <= 2 {
+        println!("-1");
+    } else {
+        println!("{ans}");
     }
 }
 

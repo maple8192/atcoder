@@ -16,10 +16,36 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+struct E(isize);
+impl Monoid for E {
+    type S = isize;
+
+    fn identity() -> Self::S {
+        0
+    }
+
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        a.abs() + b.abs()
+    }
+}
 
 fn main() {
     input! {
+        n: usize,
+        q: usize,
+        mut a: [isize; n],
+        lrv: [(usize, usize, isize); q]
+    }
 
+    let mut st = Segtree::<E>::new(n + 1);
+    for (i, (a, b)) in a.iter().tuple_windows().enumerate() {
+        st.set(i + 1, a - b);
+    }
+
+    for (l, r, v) in lrv {
+        st.set(l - 1, st.get(l - 1) - v);
+        st.set(r, st.get(r) + v);
+        println!("{}", st.prod(1..=n - 1));
     }
 }
 
