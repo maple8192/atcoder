@@ -1,0 +1,1 @@
+Param($P); cargo run --bin arc180-$P
