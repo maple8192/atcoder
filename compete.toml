@@ -57,7 +57,7 @@ const DIR8: [(isize, isize); 8] = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1
 impl usize {
     fn is_prime(&self) -> bool {
         if *self == 0 || *self == 1 { return false }
-        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x == 0)
+        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x != 0)
     }
 
     fn divisors(&self) -> Vec<usize> {

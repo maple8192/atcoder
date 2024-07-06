@@ -4,11 +4,12 @@
 use std::cmp::{max, min};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
-use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
+use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, Mod1000000007, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
 use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
+use libm::log10;
 use num_integer::{gcd, gcd_lcm};
 use omniswap::swap;
 use proconio::{fastout, input};
@@ -16,11 +17,26 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn count(n: usize) -> ModInt1000000007 {
+    let mut l = 1;
+    let mut ret = ModInt1000000007::new(0);
+    while n >= 10usize.pow(l) {
+        let p = ModInt1000000007::new(10).pow(l as u64) - ModInt1000000007::new(10).pow(l as u64 - 1);
+        ret += (p * (p - 1) / 2 + ModInt1000000007::new(10).pow(l as u64 - 1) * p) * l;
+        l += 1;
+    }
+    let p = ModInt1000000007::new(n) - ModInt1000000007::new(10).pow(l as u64 - 1) + 1;
+    ret += (p * (p - 1) / 2 + ModInt1000000007::new(10).pow(l as u64 - 1) * p) * l;
+    ret
+}
 
 fn main() {
     input! {
-
+        l: usize,
+        r: usize
     }
+
+    println!("{}", count(r) - count(l - 1));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

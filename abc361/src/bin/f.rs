@@ -9,9 +9,9 @@ use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
-use libm::sqrt;
-use num::Float;
 use num_integer::{gcd, gcd_lcm};
+use num_rational::Ratio;
+use num_traits::{FromPrimitive, ToPrimitive};
 use omniswap::swap;
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
@@ -20,17 +20,8 @@ use superslice::Ext;
 
 fn main() {
     input! {
-        k: usize
+        n: usize
     }
-
-    let mut ans = 0usize;
-    for a in (1..=10000).filter(|a| k % a == 0) {
-        for _ in (a..).take_while(|b| k / a / b >= *b).filter(|b| (k / a) % b == 0) {
-            ans += 1;
-        }
-    }
-
-    println!("{ans}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
@@ -42,7 +33,7 @@ const DIR8: [(isize, isize); 8] = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1
 impl usize {
     fn is_prime(&self) -> bool {
         if *self == 0 || *self == 1 { return false }
-        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x == 0)
+        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x != 0)
     }
 
     fn divisors(&self) -> Vec<usize> {

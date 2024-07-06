@@ -9,9 +9,9 @@ use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
-use libm::sqrt;
-use num::Float;
 use num_integer::{gcd, gcd_lcm};
+use num_rational::Ratio;
+use num_traits::{FromPrimitive, ToPrimitive};
 use omniswap::swap;
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
@@ -20,17 +20,47 @@ use superslice::Ext;
 
 fn main() {
     input! {
-        k: usize
+        n: usize,
+        mut s: Bytes,
+        mut t: Bytes
     }
 
-    let mut ans = 0usize;
-    for a in (1..=10000).filter(|a| k % a == 0) {
-        for _ in (a..).take_while(|b| k / a / b >= *b).filter(|b| (k / a) % b == 0) {
-            ans += 1;
+    let ws = s.iter().filter(|&&x| x == b'W').collect_vec().len();
+    let wt = t.iter().filter(|&&x| x == b'W').collect_vec().len();
+    if ws != wt {
+        println!("-1");
+        return;
+    }
+
+    s.push(b'.'); s.push(b'.');
+    t.push(b'.'); t.push(b'.');
+
+    let mut pt = FxHashMap::default();
+    pt.insert(s.clone(), 0);
+    let mut que = VecDeque::new();
+    que.push_back((s.clone(), 0));
+    while let Some((p, c)) = que.pop_front() {
+        let k = p.iter().enumerate().find_map(|(i, &ch)| if ch == b'.' { Some(i) } else { None }).unwrap();
+
+        if p == t {
+            println!("{}", c);
+            return;
+        }
+
+        for i in 0..p.len()-1 {
+            if p[i] == b'.' || p[i+1] == b'.' { continue }
+
+            let mut nw = p.clone();
+            nw.swap(i, k);
+            nw.swap(i+1, k+1);
+            if pt.contains_key(&nw) { continue }
+            pt.insert(nw.clone(), c);
+
+            que.push_back((nw, c + 1));
         }
     }
 
-    println!("{ans}");
+    println!("-1");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
@@ -42,7 +72,7 @@ const DIR8: [(isize, isize); 8] = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1
 impl usize {
     fn is_prime(&self) -> bool {
         if *self == 0 || *self == 1 { return false }
-        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x == 0)
+        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x != 0)
     }
 
     fn divisors(&self) -> Vec<usize> {

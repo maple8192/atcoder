@@ -24,6 +24,18 @@ fn main() {
         k: usize,
         a: [usize; n]
     }
+
+    let acc = once(&0).chain(&a).cumsum::<usize>().collect_vec();
+
+    let mut ng = 0;
+    let mut ok = l;
+    while ok.abs_diff(ng) > 1 {
+        let mid = (ng + ok) / 2;
+        let piece = 0;
+        for i in 0..k {
+
+        }
+    }
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

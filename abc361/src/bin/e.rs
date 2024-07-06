@@ -9,28 +9,51 @@ use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
-use libm::sqrt;
-use num::Float;
 use num_integer::{gcd, gcd_lcm};
+use num_rational::Ratio;
+use num_traits::{FromPrimitive, ToPrimitive};
 use omniswap::swap;
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
-fn main() {
-    input! {
-        k: usize
+fn dfs(from: isize, c: usize, d: usize, mx: &mut usize, mv: &mut usize, tree: &[Vec<(usize, usize)>]) {
+    if d > *mx {
+        *mx = d;
+        *mv = c;
     }
 
-    let mut ans = 0usize;
-    for a in (1..=10000).filter(|a| k % a == 0) {
-        for _ in (a..).take_while(|b| k / a / b >= *b).filter(|b| (k / a) % b == 0) {
-            ans += 1;
+    for (to, cs) in &tree[c] {
+        if *to as isize != from {
+            dfs(c as isize, *to, d + *cs, mx, mv, tree);
         }
     }
+}
 
-    println!("{ans}");
+fn main() {
+    input! {
+        n: usize,
+        abc: [(Usize1, Usize1, usize); n-1]
+    }
+
+    let mut e = vec![vec![]; n];
+    let mut s = 0;
+    for (a, b, c) in abc {
+        e[a].push((b, c));
+        e[b].push((a, c));
+        s += c;
+    }
+
+    let mut st = 0;
+    let mut ed = 0;
+    let mut md = 0;
+    dfs(-1, st, 0, &mut md, &mut ed, &e);
+    st = ed;
+    ed = 0;
+    md = 0;
+    dfs(-1, st, 0, &mut md, &mut ed, &e);
+    println!("{}", s * 2 - md);
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
@@ -42,7 +65,7 @@ const DIR8: [(isize, isize); 8] = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1
 impl usize {
     fn is_prime(&self) -> bool {
         if *self == 0 || *self == 1 { return false }
-        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x == 0)
+        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x != 0)
     }
 
     fn divisors(&self) -> Vec<usize> {

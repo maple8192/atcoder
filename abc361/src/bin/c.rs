@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-use std::cmp::{max, min};
+use std::cmp::{max, min, Reverse};
 use std::collections::{BinaryHeap, BTreeMap, BTreeSet, VecDeque};
 use std::iter::once;
 use ac_library::{Additive, Dsu, DynamicModInt, Max, Min, ModInt1000000007, ModInt998244353, Monoid, Multiplicative, Segtree};
@@ -9,9 +9,9 @@ use bstr::ByteSlice;
 use easy_ext::ext;
 use itertools::Itertools;
 use itertools_num::ItertoolsNum;
-use libm::sqrt;
-use num::Float;
 use num_integer::{gcd, gcd_lcm};
+use num_rational::Ratio;
+use num_traits::{FromPrimitive, ToPrimitive};
 use omniswap::swap;
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
@@ -20,14 +20,23 @@ use superslice::Ext;
 
 fn main() {
     input! {
-        k: usize
+        n: usize,
+        k: usize,
+        mut a: [usize; n]
+    }
+    a.sort();
+
+    if n - k == 1 {
+        println!("0");
+        return;
     }
 
-    let mut ans = 0usize;
-    for a in (1..=10000).filter(|a| k % a == 0) {
-        for _ in (a..).take_while(|b| k / a / b >= *b).filter(|b| (k / a) % b == 0) {
-            ans += 1;
-        }
+    let it = a.iter().tuple_windows().map(|(x, y)| y - x).collect_vec();
+    let sum = once(&0).chain(&it).cumsum::<usize>().collect_vec();
+
+    let mut ans = INF;
+    for b in sum.windows(n - k) {
+        ans = ans.min(b[b.len()-1] - b[0]);
     }
 
     println!("{ans}");
@@ -42,7 +51,7 @@ const DIR8: [(isize, isize); 8] = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1
 impl usize {
     fn is_prime(&self) -> bool {
         if *self == 0 || *self == 1 { return false }
-        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x == 0)
+        (2..).take_while(|&x| x * x <= *self).all(|x| *self % x != 0)
     }
 
     fn divisors(&self) -> Vec<usize> {
