@@ -19,7 +19,37 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        h: usize,
+        w: usize,
+        a: [Bytes; h]
+    }
 
+    let mut field = vec![vec![true; w]; h];
+    for r in 0..h {
+        let mut c = 0;
+        while c < w {
+            if a[r][c] != b'.' {
+                field[r][c] = false;
+            }
+            if a[r][c] == b'>' {
+                while c < w && a[r][c] == b'.' {
+                    field[r][c] = false;
+                    c += 1;
+                }
+                continue;
+            }
+            c += 1;
+        }
+
+        let mut c = w;
+        while c > 0 {
+            if a[r][c-1] == b'<' {
+                while c > 0 && a[r][c-1] == b'.' {
+                    field[r][c-1] = false;
+                    c -= 1;
+                }
+            }
+        }
     }
 }
 

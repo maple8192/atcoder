@@ -23,7 +23,15 @@ use superslice::Ext;
 
 fn main() {
     input! {
+        n: usize,
+        m: usize,
+        tws: [(usize, usize, usize); m]
+    }
 
+    let mut event = BTreeMap::<usize, usize>::new();
+    let mut queue = BinaryHeap::from_iter((1..=n).map(|x| Reverse(x)));
+    for (t, w, s) in tws {
+        
     }
 }
 

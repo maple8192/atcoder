@@ -23,8 +23,12 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        n: usize,
+        d: usize,
+        a: [usize; n]
     }
+
+    
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

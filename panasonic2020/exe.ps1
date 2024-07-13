@@ -1,0 +1,1 @@
+Param($P); cargo run --bin panasonic2020-$P

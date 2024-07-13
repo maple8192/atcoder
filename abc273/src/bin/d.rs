@@ -18,7 +18,14 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        h: usize,
+        w: usize,
+        mut rs: Usize1,
+        mut cs: Usize1,
+        n: usize,
+        rc: [(Usize1, Usize1); n],
+        q: usize,
+        dl: [(char, usize); q]
     }
 }
 

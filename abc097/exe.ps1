@@ -1,0 +1,1 @@
+Param($P); cargo run --bin abc097-$P

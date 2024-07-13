@@ -1,0 +1,1 @@
+Param($P); cargo run --bin agc034-$P

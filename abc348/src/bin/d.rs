@@ -12,19 +12,98 @@ use ac_library::{Additive, Dsu, FenwickTree, LazySegtree, Monoid, Segtree, suffi
 use ac_library::{convolution, floor_sum, ModInt998244353};
 use ac_library::{Max, Min};
 use easy_ext::ext;
-use itertools::{Itertools};
+use itertools::Itertools;
 use nalgebra::min;
 use num_bigint::BigUint;
 use num_integer::{gcd, gcd_lcm};
 use num_traits::{abs, pow};
 use proconio::{fastout, input};
 use proconio::marker::{Bytes, Usize1};
+use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
+
+fn bfs(field: &[Vec<u8>], point: &FxHashSet<(usize, usize)>, start: (usize, usize), energy: usize) -> FxHashSet<(usize, usize)> {
+    let h = field.len();
+    let w = field[0].len();
+
+    let mut visited = FxHashMap::from_iter([(start, 0)]);
+    let mut queue = VecDeque::from_iter([start]);
+    let mut ret = FxHashSet::default();
+    while let Some((r, c)) = queue.pop_front() {
+        if visited[&(r, c)] == energy { continue; }
+        for (dx, dy) in DIR4 {
+            let nr = r.wrapping_add_signed(dy);
+            let nc = c.wrapping_add_signed(dx);
+            if nr >= h || nc >= w || field[nr][nc] == b'#' || visited.contains_key(&(nr, nc)) { continue; }
+            visited.insert((nr, nc), visited[&(r, c)] + 1);
+            if point.contains(&(nr, nc)) {
+                ret.insert((nr, nc));
+                continue;
+            }
+            queue.push_back((nr, nc));
+        }
+    }
+    ret
+}
+
+fn dfs() {
+
+}
 
 fn main() {
     input! {
-
+        h: usize,
+        w: usize,
+        a: [Bytes; h],
+        n: usize,
+        rce: [(Usize1, Usize1, usize); n]
     }
+
+    let mut start = (0, 0);
+    let mut end = (0, 0);
+    for (r, row) in a.iter().enumerate() {
+        for (c, &ch) in row.iter().enumerate() {
+            if ch == b'S' {
+                start = (r, c);
+            }
+            if ch == b'T' {
+                end = (r, c);
+            }
+        }
+    }
+
+    let mut point = FxHashSet::from_iter([end]);
+    for &(r, c, _) in &rce {
+        point.insert((r, c));
+    }
+    if !point.contains(&start) {
+        println!("No");
+        return;
+    }
+
+    let mut reachable = vec![];
+    for &(r, c, e) in &rce {
+        reachable.push(bfs(&a, &point, (r, c), e));
+    }
+
+    let mut map = FxHashMap::default();
+    for (i, &(r, c, _)) in rce.iter().enumerate() {
+        map.insert((r, c), i);
+    }
+
+    let mut g = vec![vec![]; n];
+    let st = map[&start];
+    for (i, rc) in reachable.iter().enumerate() {
+        for &(r, c) in rc {
+            if (r, c) == end {
+                g[i].push(INF);
+                continue;
+            }
+            g[i].push(map[&(r, c)]);
+        }
+    }
+
+    println!("{g:?}");
 }
 
 const INF: usize = 1_000_000_000_000_000_000;

@@ -16,10 +16,63 @@ use proconio::marker::{Bytes, Usize1};
 use rustc_hash::{FxHashMap, FxHashSet};
 use superslice::Ext;
 
+fn bfs(tree: &[Vec<usize>], start: usize) -> (usize, usize) {
+    let mut d = vec![INF; tree.len()];
+    d[start] = 0;
+    let mut que = VecDeque::new();
+    que.push_back(start);
+    while let Some(v) = que.pop_front() {
+        for &nx in &tree[v] {
+            if d[nx] != INF { continue }
+            d[nx] = d[v] + 1;
+            que.push_back(nx);
+        }
+    }
+    let dist = *d.iter().max().unwrap();
+    let e = d.iter().enumerate().find(|(_, &d)| d == dist).unwrap().0;
+    (e, dist)
+}
+
+fn diam(tree: &[Vec<usize>]) -> (usize, usize) {
+    let (st, _) = bfs(tree, 0);
+    bfs(tree, st)
+}
+
+fn dfs(tree: &[Vec<usize>], st: usize) -> Vec<usize> {
+    let mut visited = FxHashSet::from_iter([st]);
+    let mut stack = VecDeque::from_iter([(st, 2)]);
+    let mut ans = vec![];
+    while let Some((e, s)) = stack.pop_back() {
+        if s == 0 {
+            ans.push(e);
+        }
+
+        for &nx in &tree[e] {
+            if visited.contains(&nx) { continue }
+            visited.insert(nx);
+            stack.push_back((nx, (s + 1) % 3));
+        }
+    }
+    ans
+}
+
 fn main() {
     input! {
-
+        n: usize,
+        uv: [(Usize1, Usize1); n-1]
     }
+
+    let mut g = vec![vec![]; n];
+    for (u, v) in uv {
+        g[u].push(v);
+        g[v].push(u);
+    }
+
+    let (h, _) = diam(&g);
+
+    let core = dfs(&g, h);
+
+    println!("{}", core.iter().map(|&x| g[x].len()).sorted().join(" "));
 }
 
 const INF: usize = 1_000_000_000_000_000_000;
