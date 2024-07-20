@@ -23,7 +23,7 @@ use superslice::Ext;
 
 fn main() {
     input! {
-
+        s: Bytes
     }
 }
 
